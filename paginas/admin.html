@@ -1,0 +1,170 @@
+<!doctype html>
+<!--
+  ARCHIVO: paginas/admin.html · PANEL DE ADMINISTRACIÓN (solo el administrador)
+  Qué muestra: resumen de la tienda, alertas de inventario (3 unidades o menos),
+  formulario para agregar productos, precios e inventario por sección, pedidos y restaurar catálogo.
+  Lógica propia: assets/js/paginas/admin.js → usa api/admin.php.
+  Si alguien entra sin ser administrador, se le envía a login.html?rol=admin.
+-->
+<html lang="es">
+<head>
+  <!-- ===== CABECERA: metadatos, fuentes de Google, hoja de estilos y scripts ===== -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#122957">
+  <meta name="robots" content="noindex">
+  <title>Panel de administración | JeansSync</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/estilos.css">
+  <!-- Scripts (con "defer" se ejecutan en este orden al terminar de cargar la página):
+       productos.js  → catálogo desde la base de datos y función StoreApi para hablar con PHP
+       inventario.js → unidades por talla y carrito guardado en el navegador
+       auth.js       → sesión del cliente/administrador y promesa StoreReady
+       carrito.js    → menú, tarjetas de producto, carrito y avisos (toast)
+       el último script es el propio de esta página (si lo tiene) -->
+  <script defer src="../assets/js/datos/productos.js"></script>
+  <script defer src="../assets/js/nucleo/inventario.js"></script>
+  <script defer src="../assets/js/nucleo/auth.js"></script>
+  <script defer src="../assets/js/nucleo/carrito.js"></script>
+  <script defer src="../assets/js/paginas/admin.js"></script>
+</head>
+<!-- data-page="admin": esta página la controla assets/js/paginas/admin.js -->
+<body data-root="../" data-page="admin">
+  <!-- ===== BARRA DE ANUNCIOS: los mensajes rotan cada 4,5 s (carrito.js) ===== -->
+  <div class="announcement" data-announcement><span data-announcement-text>Envío gratis en compras desde $250.000</span></div>
+  <!-- ===== MENÚ PRINCIPAL: queda fijo arriba al hacer scroll (.site-header en estilos.css) ===== -->
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="JeansSync, inicio"><img src="../assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+    <!-- Botón hamburguesa: solo se ve en celular y abre/cierra el menú -->
+    <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    <!-- Enlaces a las secciones de la tienda -->
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a href="../index.html">Inicio</a>
+      <a href="caballero.html">Caballero</a>
+      <a href="dama.html">Dama</a>
+      <a href="ninos.html">Niños</a>
+    </nav>
+    <!-- Cuenta (auth.js cambia el texto: Ingresar / Hola, nombre / Panel admin) y carrito con contador -->
+    <div class="header-actions">
+      <a class="account-link active" data-account-link href="admin.html"><span class="account-icon" aria-hidden="true">★</span><span class="account-text">Panel admin</span></a>
+      <a class="cart-link" href="carrito.html"><span class="cart-text">Carrito</span> <span class="cart-count" data-cart-count>0</span></a>
+    </div>
+  </header>
+
+  <!-- ===== CONTENIDO DEL PANEL: oculto (hidden) hasta comprobar que la sesión es del administrador ===== -->
+  <main class="admin-page section-wrap" data-admin-main hidden>
+    <!-- Saludo y botones Ver tienda / Cerrar sesión -->
+    <div class="admin-top">
+      <div>
+        <span class="eyebrow">PANEL DE ADMINISTRACIÓN</span>
+        <h1>Hola, Administrador.</h1>
+        <p>Agrega productos, ajusta precios y unidades. Todo se refleja al instante en la tienda.</p>
+      </div>
+      <div class="admin-top-actions">
+        <a class="button button-lime" href="../index.html" target="_blank" rel="noopener">Ver tienda <span aria-hidden="true">↗</span></a>
+        <button class="button button-ghost" type="button" data-logout>Cerrar sesión</button>
+      </div>
+    </div>
+
+    <!-- ===== RESUMEN: productos por sección, inventario y ventas (admin.js: renderStats) ===== -->
+
+    <section class="admin-stats" data-admin-stats aria-label="Resumen de la tienda"></section>
+
+    <!-- ===== ALERTAS DE INVENTARIO en rojo: tallas con 3 unidades o menos (admin.js: renderAlerts) ===== -->
+    <section class="stock-alerts" data-stock-alerts aria-live="polite" hidden></section>
+
+    <div class="admin-grid">
+      <!-- ===== AGREGAR PRODUCTO: sección, precio, nombre, descripción, foto y unidades por talla (acción "crear") ===== -->
+      <section class="admin-card" aria-labelledby="titulo-nuevo">
+        <div class="admin-card-head">
+          <span class="admin-step">+</span>
+          <div><h2 id="titulo-nuevo">Agregar producto</h2><p>Aparece de inmediato en su sección y en el inicio.</p></div>
+        </div>
+        <form class="admin-form" data-new-product novalidate>
+          <label>Sección
+            <select name="category" data-new-category required>
+              <option value="caballero">Caballero</option>
+              <option value="dama">Dama</option>
+              <option value="ninos">Niños</option>
+            </select>
+          </label>
+          <label>Precio (COP)<input name="price" type="number" inputmode="numeric" required min="1000" step="100" placeholder="Ej: 159900"></label>
+          <label class="full-field">Nombre del producto<input name="name" required minlength="3" maxlength="40" placeholder="Ej: Recto Azul Clásico"></label>
+          <label class="full-field">Descripción<textarea name="description" rows="2" maxlength="120" placeholder="Ej: Corte recto y tela suave para todos los días."></textarea></label>
+
+          <!-- Foto: subir desde el equipo (se guarda en assets/img/productos) o pegar un enlace -->
+
+          <fieldset class="full-field image-field">
+            <legend>Foto del producto</legend>
+            <div class="image-input">
+              <div class="image-preview" data-image-preview><span>Vista previa</span></div>
+              <div class="image-options">
+                <label class="file-button">Subir foto desde el equipo<input type="file" accept="image/*" data-image-file></label>
+                <span class="image-or">o pega el enlace de una imagen</span>
+                <input name="imageUrl" type="url" placeholder="https://…" data-image-url aria-label="Enlace de la imagen">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="full-field">
+            <legend>Unidades por talla</legend>
+            <!-- admin.js crea un campo por talla según la sección elegida -->
+            <div class="stock-inputs" data-new-stock></div>
+          </fieldset>
+
+          <p class="form-error full-field" role="alert" data-new-error></p>
+          <button class="button button-dark button-wide full-field" type="submit">Publicar producto <span aria-hidden="true">→</span></button>
+        </form>
+      </section>
+
+      <!-- ===== PRECIOS E INVENTARIO: pestañas por sección, ajuste en %, buscador y lista editable ===== -->
+      <section class="admin-card admin-catalog" aria-labelledby="titulo-precios">
+        <div class="admin-card-head">
+          <span class="admin-step">$</span>
+          <div><h2 id="titulo-precios">Precios e inventario</h2><p>Los cambios se guardan solos al salir de cada campo.</p></div>
+        </div>
+        <div class="section-tabs" role="tablist" aria-label="Sección" data-section-tabs></div>
+        <!-- Sube o baja en % todos los precios de la sección abierta (acción "ajuste") -->
+        <div class="bulk-price">
+          <label>Ajustar todos los precios de esta sección
+            <span class="bulk-row">
+              <input type="number" step="1" min="-90" max="200" value="10" data-bulk-percent aria-label="Porcentaje">
+              <span>%</span>
+              <button type="button" class="button button-dark" data-bulk="up">Subir</button>
+              <button type="button" class="button button-ghost" data-bulk="down">Bajar</button>
+            </span>
+          </label>
+        </div>
+        <input class="admin-search" type="search" placeholder="Buscar por nombre o referencia…" data-admin-search aria-label="Buscar producto">
+        <!-- Una fila por producto: nombre y precio editables, unidades por talla y botón eliminar -->
+        <div class="admin-list" data-admin-list></div>
+      </section>
+    </div>
+
+    <!-- ===== PEDIDOS RECIBIDOS: los últimos 20 de la base de datos ===== -->
+
+    <section class="admin-card" aria-labelledby="titulo-pedidos">
+      <div class="admin-card-head">
+        <span class="admin-step">✓</span>
+        <div><h2 id="titulo-pedidos">Pedidos recibidos</h2><p>Últimos pedidos guardados en la base de datos.</p></div>
+      </div>
+      <div data-admin-orders></div>
+    </section>
+
+    <!-- ===== RESTAURAR CATÁLOGO: vuelve a los 60 productos de fábrica (acción "restaurar") ===== -->
+
+    <div class="admin-danger">
+      <div><strong>Restaurar catálogo original</strong><p>Retira los productos agregados y devuelve nombres, precios y fotos de fábrica. Los pedidos no se borran.</p></div>
+      <button class="button button-danger" type="button" data-reset-catalog>Restaurar</button>
+    </div>
+  </main>
+
+  <!-- ===== PIE DE PÁGINA ===== -->
+
+  <footer class="site-footer">
+    <div class="footer-bottom"><span>© 2026 JeansSync · Panel de administración</span><span>Datos guardados en MySQL (XAMPP).</span></div>
+  </footer>
+</body>
+</html>

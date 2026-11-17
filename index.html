@@ -1,0 +1,167 @@
+<!doctype html>
+<!--
+  ARCHIVO: index.html · PÁGINA DE INICIO
+  Qué muestra: carrusel principal, franja animada, accesos a las 3 colecciones,
+  4 productos de muestra por sección (con botón a la colección completa) y beneficios.
+  Lógica propia: assets/js/paginas/inicio.js (carrusel y muestras de productos).
+  Estilos: assets/css/estilos.css (secciones Hero, Categorías, Muestras de colección).
+-->
+<html lang="es">
+<head>
+  <!-- ===== CABECERA: metadatos, fuentes de Google, hoja de estilos y scripts ===== -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#122957">
+  <meta name="description" content="JeansSync: denim para caballero, dama y niños. Encuentra tu próximo jean y compra tu talla en línea.">
+  <title>JeansSync | Moda que se sincroniza contigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/estilos.css?v=7">
+  <!-- Scripts (con "defer" se ejecutan en este orden al terminar de cargar la página):
+       productos.js  → catálogo desde la base de datos y función StoreApi para hablar con PHP
+       inventario.js → unidades por talla y carrito guardado en el navegador
+       auth.js       → sesión del cliente/administrador y promesa StoreReady
+       carrito.js    → menú, tarjetas de producto, carrito y avisos (toast)
+       el último script es el propio de esta página (si lo tiene) -->
+  <script defer src="assets/js/datos/productos.js"></script>
+  <script defer src="assets/js/nucleo/inventario.js"></script>
+    <script defer src="assets/js/nucleo/auth.js"></script>
+  <script defer src="assets/js/nucleo/carrito.js"></script>
+  <script defer src="assets/js/paginas/inicio.js"></script>
+</head>
+<body data-page="home" data-root="">
+  <!-- ===== BARRA DE ANUNCIOS: los mensajes rotan cada 4,5 s (carrito.js) ===== -->
+  <div class="announcement" data-announcement><span data-announcement-text>Envío gratis en compras desde $250.000</span></div>
+  <!-- ===== MENÚ PRINCIPAL: queda fijo arriba al hacer scroll (.site-header en estilos.css) ===== -->
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="JeansSync, inicio"><img src="assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+    <!-- Botón hamburguesa: solo se ve en celular y abre/cierra el menú -->
+    <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    <!-- Enlaces a las secciones de la tienda -->
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a class="active" aria-current="page" href="index.html">Inicio</a>
+      <a href="paginas/caballero.html">Caballero</a>
+      <a href="paginas/dama.html">Dama</a>
+      <a href="paginas/ninos.html">Niños</a>
+    </nav>
+    <!-- Cuenta (auth.js cambia el texto: Ingresar / Hola, nombre / Panel admin) y carrito con contador -->
+    <div class="header-actions">
+      <a class="account-link" data-account-link href="paginas/login.html"><span class="account-icon" aria-hidden="true">●</span><span class="account-text">Ingresar</span></a>
+      <a class="cart-link" href="paginas/carrito.html"><span class="cart-text">Carrito</span> <span class="cart-count" data-cart-count>0</span></a>
+    </div>
+  </header>
+
+
+  <!-- ===== CONTENIDO PRINCIPAL ===== -->
+  <main>
+    <!-- ===== CARRUSEL (HERO): 3 diapositivas, una por colección. Textos, fotos y enlaces se definen en inicio.js (lista "slides") ===== -->
+    <section class="hero" aria-label="Colección destacada">
+      <div class="hero-image" data-hero-image></div><div class="hero-shade"></div>
+      <div class="hero-content">
+        <span class="eyebrow" data-hero-eyebrow>COLECCIÓN 2026</span>
+        <h1 data-hero-title>Jeans con<br>carácter.</h1>
+        <p data-hero-copy>Buenos cortes para todos tus planes.</p>
+        <a class="button button-lime" data-hero-link href="paginas/caballero.html">Ver colección caballero <span aria-hidden="true">↗</span></a>
+      </div>
+      <!-- Controles: flecha anterior, puntos (el activo es una barra que marca el tiempo) y flecha siguiente -->
+      <div class="hero-controls"><button type="button" data-hero-prev aria-label="Diapositiva anterior">←</button><div class="hero-dots" data-hero-dots></div><button type="button" data-hero-next aria-label="Siguiente diapositiva">→</button><span class="hero-number" data-hero-number>01 / 03</span></div>
+      <span class="hero-side-note">BOGOTÁ · COLOMBIA</span>
+    </section>
+
+    <!-- ===== FRANJA ANIMADA: frases que se desplazan (van repetidas 2 veces para que el movimiento no se corte) ===== -->
+    <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>Nueva colección 2026</span><span>Jeans para toda la familia</span><span>Tiro alto, bota recta y bota ancha</span><span>Envío gratis desde $250.000</span><span>Tu talla, tu estilo</span><span>Hechos para durar</span><span>Moda que se sincroniza contigo</span><span>Nueva colección 2026</span><span>Jeans para toda la familia</span><span>Tiro alto, bota recta y bota ancha</span><span>Envío gratis desde $250.000</span><span>Tu talla, tu estilo</span><span>Hechos para durar</span><span>Moda que se sincroniza contigo</span></div></div>
+
+    <!-- ===== ACCESOS A LAS 3 COLECCIONES: tarjetas grandes con foto (#colecciones) ===== -->
+    <section class="home-categories section-wrap" id="colecciones">
+      <div class="section-heading reveal">
+        <div><span class="eyebrow">HECHO PARA TODOS</span><h2>Encuentra tu estilo.</h2></div>
+        <p>Tres colecciones. Un mismo amor por los buenos jeans.</p>
+      </div>
+      <div class="category-grid">
+        <a class="category-tile reveal" href="paginas/caballero.html"><img src="https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=1000&q=85" alt="Hombre con jeans azules"><span class="category-index">01 / COLECCIÓN</span><strong>Caballero</strong><span class="category-arrow" aria-hidden="true">↗</span></a>
+        <a class="category-tile reveal" href="paginas/dama.html"><img src="https://images.unsplash.com/photo-1608370946545-7d93571b5593?auto=format&fit=crop&w=1000&q=85" alt="Mujer con jeans azules"><span class="category-index">02 / COLECCIÓN</span><strong>Dama</strong><span class="category-arrow" aria-hidden="true">↗</span></a>
+        <a class="category-tile reveal" href="paginas/ninos.html"><img src="https://images.unsplash.com/photo-1631044237696-6b38064fbbf4?auto=format&fit=crop&w=1000&q=85" alt="Niño con jeans azules"><span class="category-index">03 / COLECCIÓN</span><strong>Niños</strong><span class="category-arrow" aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <!-- ===== MUESTRA DE CADA SECCIÓN: inicio.js pone 4 productos en cada data-home-collection ===== -->
+    <!-- Caballero -->
+    <section class="home-collection home-collection-alt" aria-labelledby="titulo-caballero">
+      <div class="section-wrap">
+        <div class="section-heading reveal">
+          <div><span class="eyebrow">01 / CABALLERO</span><h2 id="titulo-caballero">Jeans con carácter.</h2></div>
+          <p>Ajustados, rectos, holgados y más. Cortes clásicos para todos los días.</p>
+        </div>
+        <div class="product-grid" data-home-collection="caballero"></div>
+        <div class="collection-cta reveal"><a class="button button-dark" href="paginas/caballero.html">Ver toda la colección caballero <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <!-- Dama -->
+    <section class="home-collection" aria-labelledby="titulo-dama">
+      <div class="section-wrap">
+        <div class="section-heading reveal">
+          <div><span class="eyebrow">02 / DAMA</span><h2 id="titulo-dama">Tu forma. Tu jean.</h2></div>
+          <p>Tiro alto, bota ancha, bota campana y más, para llevar a tu ritmo.</p>
+        </div>
+        <div class="product-grid" data-home-collection="dama"></div>
+        <div class="collection-cta reveal"><a class="button button-dark" href="paginas/dama.html">Ver toda la colección dama <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <!-- Niños -->
+    <section class="home-collection home-collection-alt" aria-labelledby="titulo-ninos">
+      <div class="section-wrap">
+        <div class="section-heading reveal">
+          <div><span class="eyebrow">03 / NIÑOS</span><h2 id="titulo-ninos">Pequeños estilos. Grandes planes.</h2></div>
+          <p>Jeans cómodos y resistentes para jugar, correr y descubrir.</p>
+        </div>
+        <div class="product-grid" data-home-collection="ninos"></div>
+        <div class="collection-cta reveal"><a class="button button-dark" href="paginas/ninos.html">Ver toda la colección niños <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <!-- ===== MISIÓN Y VISIÓN (#nosotros) ===== -->
+    <section class="mission-vision section-wrap" id="nosotros" aria-labelledby="titulo-nosotros">
+      <div class="section-heading reveal">
+        <div><span class="eyebrow">NOSOTROS</span><h2 id="titulo-nosotros">Esto es JeansSync.</h2></div>
+        <p>JeansSync nace en Cúcuta para sincronizar tu estilo con buenos jeans, para toda la familia.</p>
+      </div>
+      <div class="mv-grid">
+        <article class="mv-card mv-card-dark reveal">
+          <span class="mv-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></g></svg></span>
+          <span class="mv-label">01 / MISIÓN</span>
+          <h3>Vestir bien, sin complicaciones.</h3>
+          <p>En JeansSync ofrecemos jeans de calidad para caballero, dama y niños, con cortes cómodos y duraderos a precios justos, a través de una experiencia de compra en línea sencilla, segura y cercana que haga sentir a cada cliente seguro con su estilo.</p>
+        </article>
+        <article class="mv-card reveal">
+          <span class="mv-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g></svg></span>
+          <span class="mv-label">02 / VISIÓN</span>
+          <h3>JeansSync, el denim de confianza en Colombia.</h3>
+          <p>Para 2030, JeansSync será la tienda de jeans en línea preferida por las familias colombianas, reconocida desde Cúcuta por la calidad de sus prendas, la innovación en su servicio digital y su compromiso con una moda responsable y accesible.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== BENEFICIOS DE LA TIENDA ===== -->
+    <section class="benefits section-wrap reveal">
+      <div><span class="benefit-icon">01</span><h3>Cortes que sí te quedan</h3><p>Cortes pensados para sentirse bien, todo el día.</p></div>
+      <div><span class="benefit-icon">02</span><h3>Compra sin vueltas</h3><p>Elige tu talla, agrega al carrito y listo.</p></div>
+      <div><span class="benefit-icon">03</span><h3>Envío gratis</h3><p>En pedidos desde $250.000 a todo el país.</p></div>
+    </section>
+  </main>
+
+  <!-- ===== PIE DE PÁGINA ===== -->
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <a class="brand brand-footer" href="index.html"><img src="assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+      <p>Denim para todos los días.<br>Hecho para moverse contigo.</p>
+      <div class="footer-nav"><a href="paginas/caballero.html">Caballero</a><a href="paginas/dama.html">Dama</a><a href="paginas/ninos.html">Niños</a><a href="paginas/carrito.html">Carrito</a></div>
+      <div class="footer-contact"><span>HABLEMOS</span><a class="contact-item" href="https://wa.me/573182213870" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp al 318 221 3870"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.21 4.24-9.45 9.46-9.45a9.4 9.4 0 0 1 6.68 2.77 9.39 9.39 0 0 1 2.77 6.69c0 5.21-4.24 9.45-9.46 9.45zm8.05-17.5A11.32 11.32 0 0 0 12.04.66C5.77.66.66 5.77.66 12.04c0 2 .52 3.96 1.52 5.69L.57 23.6l6.03-1.58a11.36 11.36 0 0 0 5.44 1.38h.01c6.27 0 11.38-5.1 11.38-11.37 0-3.04-1.18-5.9-3.34-8.04z"/></svg></span><span class="contact-text">318 221 3870</span></a><a class="contact-item" href="mailto:est_ac_cuvides@fesc.edu.co" aria-label="Enviar correo a est_ac_cuvides@fesc.edu.co"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg></span><span class="contact-text">est_ac_cuvides@fesc.edu.co</span></a><a class="contact-item" href="https://www.google.com/maps/search/?api=1&amp;query=C%C3%BAcuta%2C%20Colombia" target="_blank" rel="noopener" aria-label="Ver Cúcuta, Colombia en el mapa"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span><span class="contact-text">Cúcuta, Colombia</span></a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 JeansSync</span><span>Una tienda de demostración. Pagos simulados.</span></div>
+  </footer>
+</body>
+</html>

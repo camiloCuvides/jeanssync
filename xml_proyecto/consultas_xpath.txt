@@ -1,0 +1,25 @@
+CONSULTAS XPATH DEL PROYECTO JEANSSYNC (Paso P4)
+Ejecutar desde la carpeta xml_proyecto:  php consultar.php "EXPRESION"
+
+1. Ruta absoluta - Que productos hay en el catalogo?
+   /productos/producto/nombre/text()                      -> 7 nodos
+2. Valor de atributo - De que tienda es la respuesta?
+   /productos/@tienda                                     -> JeansSync
+3. Filtro por atributo - Que jeans hay en la seccion dama?
+   //producto[@categoria='dama']/nombre/text()            -> Tiro Alto Aurora, Bota Ancha Horizonte
+4. Filtro numerico - Que productos hay que reabastecer (menos de 10 unidades)?
+   //producto[unidades < 10]/nombre/text()                -> Recto Clasico, Bota Ancha Horizonte, Cargo Bolsillos & Correa
+5. count() - Cuantos productos tiene la seccion caballero?
+   count(//producto[@categoria='caballero'])              -> 3.0
+6. sum() - Cuantas unidades hay en total?
+   sum(//producto/unidades)                               -> 132.0
+7. not() - Que producto no tiene descripcion?
+   //producto[not(descripcion)]/@id                       -> caballero-21
+8. and - Que jeans de caballero cuestan mas de 150000?
+   //producto[@categoria='caballero' and precio > 150000]/nombre/text()  -> Recto Clasico, Cargo Bolsillos & Correa
+
+PRUEBA DE CONTRATO ROTO (Paso P7)
+1. En servicio.php cambie readfile('productos.xml') por readfile('contrato_roto.xml')
+2. php -S localhost:8000      (terminal 1)
+3. php cliente.php servicio.php   (terminal 2)  -> "NO cumple el contrato (DTD). No se procesa."
+4. Devuelva servicio.php a 'productos.xml' y repita el paso 3: vuelve a funcionar.

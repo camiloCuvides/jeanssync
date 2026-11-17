@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  ARCHIVO: paginas/carrito.html · CARRITO DE COMPRAS
+  Qué muestra: las prendas agregadas, cantidades, avisos de prendas agotadas y el resumen con envío.
+  Cómo funciona: carrito.js (función renderCart) dibuja la lista y el resumen.
+  Para pagar se necesita cuenta de cliente; si no hay sesión se envía a login.html.
+-->
+<html lang="es">
+
+<head>
+
+  <!-- ===== CABECERA: metadatos, fuentes de Google, hoja de estilos y scripts ===== -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#122957">
+    <title>Tu carrito | JeansSync</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/estilos.css?v=7">
+    <!-- Scripts (con "defer" se ejecutan en este orden al terminar de cargar la página):
+         productos.js  → catálogo desde la base de datos y función StoreApi para hablar con PHP
+         inventario.js → unidades por talla y carrito guardado en el navegador
+         auth.js       → sesión del cliente/administrador y promesa StoreReady
+         carrito.js    → menú, tarjetas de producto, carrito y avisos (toast)
+         el último script es el propio de esta página (si lo tiene) -->
+    <script defer src="../assets/js/datos/productos.js"></script>
+    <script defer src="../assets/js/nucleo/inventario.js"></script>
+    <script defer src="../assets/js/nucleo/auth.js"></script>
+    <script defer src="../assets/js/nucleo/carrito.js"></script>
+</head>
+
+<!-- data-page="cart" le indica a carrito.js que dibuje la lista del carrito -->
+<body data-root="../" data-page="cart">
+    <!-- ===== BARRA DE ANUNCIOS: los mensajes rotan cada 4,5 s (carrito.js) ===== -->
+    <div class="announcement" data-announcement><span data-announcement-text>Envío gratis en compras desde $250.000</span></div>
+  <!-- ===== MENÚ PRINCIPAL: queda fijo arriba al hacer scroll (.site-header en estilos.css) ===== -->
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="JeansSync, inicio"><img src="../assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+    <!-- Botón hamburguesa: solo se ve en celular y abre/cierra el menú -->
+    <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    <!-- Enlaces a las secciones de la tienda -->
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a href="../index.html">Inicio</a>
+      <a href="caballero.html">Caballero</a>
+      <a href="dama.html">Dama</a>
+      <a href="ninos.html">Niños</a>
+    </nav>
+    <!-- Cuenta (auth.js cambia el texto: Ingresar / Hola, nombre / Panel admin) y carrito con contador -->
+    <div class="header-actions">
+      <a class="account-link" data-account-link href="login.html"><span class="account-icon" aria-hidden="true">●</span><span class="account-text">Ingresar</span></a>
+      <a class="cart-link active" href="carrito.html"><span class="cart-text">Carrito</span> <span class="cart-count" data-cart-count>0</span></a>
+    </div>
+  </header>
+
+    <main class="cart-page section-wrap">
+        <!-- ===== TÍTULO DE LA PÁGINA (el número junto a "Tu carrito" es la cantidad de prendas) ===== -->
+        <div class="page-intro"><span class="eyebrow">CASI TUYO</span>
+            <h1>Tu carrito<span class="cart-count-inline" data-cart-count>0</span></h1>
+            <p>Revisa tus prendas antes de finalizar el pedido.</p>
+        </div>
+        <!-- ===== LISTA + RESUMEN: los dos se llenan desde carrito.js (renderCart) ===== -->
+        <div class="cart-layout">
+            <!-- Prendas del carrito: foto, talla, cantidad, total por línea y avisos si algo se agotó -->
+            <section class="cart-items" data-cart-items aria-live="polite"></section>
+            <!-- Resumen: subtotal, barra de envío gratis, total y botón para pagar (o para ingresar) -->
+            <aside class="order-summary" data-cart-summary></aside>
+        </div>
+    </main>
+    <!-- ===== PIE DE PÁGINA ===== -->
+    <footer class="site-footer">
+        <div class="footer-main"><a class="brand brand-footer" href="../index.html"><img src="../assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+            <p>Denim para todos los días.<br>Hecho para moverse contigo.</p>
+            <div class="footer-nav"><a href="caballero.html">Caballero</a><a href="dama.html">Dama</a><a
+                    href="ninos.html">Niños</a><a href="carrito.html">Carrito</a></div>
+                <div class="footer-contact"><span>HABLEMOS</span><a class="contact-item" href="https://wa.me/573182213870" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp al 318 221 3870"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.21 4.24-9.45 9.46-9.45a9.4 9.4 0 0 1 6.68 2.77 9.39 9.39 0 0 1 2.77 6.69c0 5.21-4.24 9.45-9.46 9.45zm8.05-17.5A11.32 11.32 0 0 0 12.04.66C5.77.66.66 5.77.66 12.04c0 2 .52 3.96 1.52 5.69L.57 23.6l6.03-1.58a11.36 11.36 0 0 0 5.44 1.38h.01c6.27 0 11.38-5.1 11.38-11.37 0-3.04-1.18-5.9-3.34-8.04z"/></svg></span><span class="contact-text">318 221 3870</span></a><a class="contact-item" href="mailto:est_ac_cuvides@fesc.edu.co" aria-label="Enviar correo a est_ac_cuvides@fesc.edu.co"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg></span><span class="contact-text">est_ac_cuvides@fesc.edu.co</span></a><a class="contact-item" href="https://www.google.com/maps/search/?api=1&amp;query=C%C3%BAcuta%2C%20Colombia" target="_blank" rel="noopener" aria-label="Ver Cúcuta, Colombia en el mapa"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span><span class="contact-text">Cúcuta, Colombia</span></a></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 JeansSync</span><span>Una tienda de demostración. Pagos
+                simulados.</span></div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!-- =========================================================
+     productos.dtd
+     Contrato que debe cumplir la respuesta XML del catálogo
+     de JeansSync (productos.xml / api_xml.php)
+     ========================================================= -->
+
+<!-- El elemento raíz "productos" contiene UNO o MÁS productos (+) -->
+<!ELEMENT productos (producto+)>
+<!-- Atributos obligatorios del catálogo -->
+<!ATTLIST productos
+          tienda CDATA #REQUIRED
+          fecha  CDATA #REQUIRED>
+
+<!-- Cada producto tiene, EN ESTE ORDEN: referencia, nombre, precio,
+     unidades y, opcionalmente (?), una descripción -->
+<!ELEMENT producto (referencia, nombre, precio, unidades, descripcion?)>
+<!-- id:        identificador único (tipo ID, no puede repetirse)
+     categoria: solo admite una de las tres secciones de la tienda
+     origen:    "fabrica" = viene con la tienda, "admin" = lo agregó el
+                administrador; si no se escribe, vale "fabrica" -->
+<!ATTLIST producto
+          id        ID                          #REQUIRED
+          categoria (caballero | dama | ninos)  #REQUIRED
+          origen    (fabrica | admin)           "fabrica">
+
+<!-- Elementos que solo contienen texto (#PCDATA) -->
+<!ELEMENT referencia  (#PCDATA)>
+<!ELEMENT nombre      (#PCDATA)>
+<!ELEMENT precio      (#PCDATA)>
+<!-- moneda es opcional; si no se escribe, vale "COP" -->
+<!ATTLIST precio moneda CDATA "COP">
+<!ELEMENT unidades    (#PCDATA)>
+<!ELEMENT descripcion (#PCDATA)>

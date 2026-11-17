@@ -1,0 +1,182 @@
+<!doctype html>
+<!--
+  ARCHIVO: paginas/login.html · INGRESO Y REGISTRO
+  Qué muestra: pestañas Soy cliente / Soy administrador, formularios de ingreso y registro,
+  y la vista Mi cuenta con los pedidos cuando ya hay sesión.
+  Lógica propia: assets/js/paginas/login.js → usa api/auth.php y api/pedidos.php.
+  Parámetros de la URL: ?rol=admin (abre la pestaña de administrador),
+  ?modo=registro (abre Crear cuenta), ?volver=checkout (después de ingresar va al pago),
+  ?recuperar=1 (abre la ventana "¿Olvidaste tu clave?").
+-->
+<html lang="es">
+<head>
+  <!-- ===== CABECERA: metadatos, fuentes de Google, hoja de estilos y scripts ===== -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#122957">
+  <title>Ingresar | JeansSync</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/estilos.css?v=7">
+  <!-- Scripts (con "defer" se ejecutan en este orden al terminar de cargar la página):
+       productos.js  → catálogo desde la base de datos y función StoreApi para hablar con PHP
+       inventario.js → unidades por talla y carrito guardado en el navegador
+       auth.js       → sesión del cliente/administrador y promesa StoreReady
+       carrito.js    → menú, tarjetas de producto, carrito y avisos (toast)
+       el último script es el propio de esta página (si lo tiene) -->
+  <script defer src="../assets/js/datos/productos.js"></script>
+  <script defer src="../assets/js/nucleo/inventario.js"></script>
+  <script defer src="../assets/js/nucleo/auth.js"></script>
+  <script defer src="../assets/js/nucleo/carrito.js"></script>
+  <script defer src="../assets/js/paginas/login.js"></script>
+</head>
+<!-- data-page="login": esta página la controla assets/js/paginas/login.js -->
+<body data-root="../" data-page="login">
+  <!-- ===== BARRA DE ANUNCIOS: los mensajes rotan cada 4,5 s (carrito.js) ===== -->
+  <div class="announcement" data-announcement><span data-announcement-text>Envío gratis en compras desde $250.000</span></div>
+  <!-- ===== MENÚ PRINCIPAL: queda fijo arriba al hacer scroll (.site-header en estilos.css) ===== -->
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="JeansSync, inicio"><img src="../assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+    <!-- Botón hamburguesa: solo se ve en celular y abre/cierra el menú -->
+    <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    <!-- Enlaces a las secciones de la tienda -->
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a href="../index.html">Inicio</a>
+      <a href="caballero.html">Caballero</a>
+      <a href="dama.html">Dama</a>
+      <a href="ninos.html">Niños</a>
+    </nav>
+    <!-- Cuenta (auth.js cambia el texto: Ingresar / Hola, nombre / Panel admin) y carrito con contador -->
+    <div class="header-actions">
+      <a class="account-link active" data-account-link href="login.html"><span class="account-icon" aria-hidden="true">●</span><span class="account-text">Ingresar</span></a>
+      <a class="cart-link" href="carrito.html"><span class="cart-text">Carrito</span> <span class="cart-count" data-cart-count>0</span></a>
+    </div>
+  </header>
+
+  <!-- ===== CONTENIDO: a la izquierda una foto, a la derecha la tarjeta de ingreso ===== -->
+
+  <main class="auth-page">
+    <!-- Foto decorativa con el lema (la imagen está en estilos.css: .auth-visual) -->
+    <div class="auth-visual" aria-hidden="true">
+      <div class="auth-visual-copy">
+        <span class="eyebrow">JEANSSYNC</span>
+        <strong>Moda que se sincroniza contigo.</strong>
+        <p>Guarda tus datos, compra más rápido y revisa tus pedidos.</p>
+      </div>
+    </div>
+
+    <div class="auth-side">
+      <!-- ===== SIN SESIÓN: elegir "Soy cliente" o "Soy administrador" ===== -->
+      <section class="auth-card" data-auth-guest>
+        <span class="eyebrow">TU CUENTA</span>
+        <h1>Bienvenido.</h1>
+        <p class="auth-lead">¿Cómo quieres entrar?</p>
+
+        <!-- Pestañas cliente / administrador -->
+
+        <div class="role-switch" role="tablist" aria-label="Tipo de cuenta">
+          <button type="button" role="tab" id="tab-cliente" aria-controls="panel-cliente" aria-selected="true" data-role="client">Soy cliente</button>
+          <button type="button" role="tab" id="tab-admin" aria-controls="panel-admin" aria-selected="false" data-role="admin">Soy administrador</button>
+        </div>
+
+        <!-- ===== PANEL CLIENTE: "Ya tengo cuenta" o "Crear cuenta" ===== -->
+
+        <div class="auth-panel" id="panel-cliente" role="tabpanel" aria-labelledby="tab-cliente" data-panel="client">
+          <div class="mode-switch" data-mode-switch>
+            <button type="button" aria-pressed="true" data-mode="login">Ya tengo cuenta</button>
+            <button type="button" aria-pressed="false" data-mode="register">Crear cuenta</button>
+          </div>
+
+          <!-- Ingreso del cliente: correo y clave (api/auth.php, acción "login") -->
+
+          <form class="auth-form" data-form="client-login" novalidate>
+            <label>Correo electrónico<input name="email" type="email" autocomplete="email" required placeholder="nombre@correo.com"></label>
+            <label>Clave<span class="password-field"><input name="password" type="password" autocomplete="current-password" required placeholder="Tu clave"><button type="button" class="toggle-password" aria-label="Mostrar clave">Ver</button></span></label>
+            <button class="forgot-link" type="button" data-forgot-open>¿Olvidaste tu clave?</button>
+            <p class="form-error" role="alert" data-error></p>
+            <button class="button button-dark button-wide" type="submit">Ingresar <span aria-hidden="true">→</span></button>
+          </form>
+
+          <!-- Registro: nombre, correo, clave y datos de entrega opcionales (api/auth.php, acción "registro") -->
+
+          <form class="auth-form" data-form="register" novalidate hidden>
+            <label>Nombre completo<input name="name" autocomplete="name" required minlength="3" placeholder="Tu nombre"></label>
+            <label>Correo electrónico<input name="email" type="email" autocomplete="email" required placeholder="nombre@correo.com"></label>
+            <label>Clave<span class="password-field"><input name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres"><button type="button" class="toggle-password" aria-label="Mostrar clave">Ver</button></span></label>
+            <details class="optional-fields">
+              <summary>Agregar datos de entrega <span>(opcional, para comprar más rápido)</span></summary>
+              <div class="optional-grid">
+                <label>Teléfono<input name="phone" type="tel" autocomplete="tel" placeholder="300 000 0000"></label>
+                <label>Ciudad<input name="city" autocomplete="address-level2" placeholder="Bogotá"></label>
+                <label class="full-field">Dirección<input name="address" autocomplete="street-address" placeholder="Calle, carrera, número y apartamento"></label>
+              </div>
+            </details>
+            <p class="form-error" role="alert" data-error></p>
+            <button class="button button-lime button-wide" type="submit">Crear mi cuenta <span aria-hidden="true">→</span></button>
+          </form>
+        </div>
+
+        <!-- ===== PANEL ADMINISTRADOR: usuario y clave (api/auth.php, acción "admin") ===== -->
+
+        <div class="auth-panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin" data-panel="admin" hidden>
+          <form class="auth-form" data-form="admin" novalidate>
+            <label>Usuario<input name="user" autocomplete="username" required placeholder="Usuario del administrador"></label>
+            <label>Clave<span class="password-field"><input name="password" type="password" autocomplete="current-password" required placeholder="Clave del administrador"><button type="button" class="toggle-password" aria-label="Mostrar clave">Ver</button></span></label>
+            <p class="form-error" role="alert" data-error></p>
+            <button class="button button-dark button-wide" type="submit">Entrar al panel <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="auth-note">Acceso exclusivo para el administrador de la tienda.</p>
+        </div>
+      </section>
+
+      <!-- ===== CON SESIÓN: "Mi cuenta" con los pedidos del cliente, o acceso al panel si es administrador (lo dibuja login.js) ===== -->
+      <section class="auth-card" data-auth-session hidden></section>
+    </div>
+  </main>
+
+  <!-- ===== VENTANA "¿OLVIDASTE TU CLAVE?": cuadro centrado sobre la página (login.js lo abre con showModal) =====
+       1. forgot-request: el cliente escribe su correo → api/auth.php "recuperar" le envía un enlace.
+       2. forgot-sent: confirma que el enlace llegó a su correo. El enlace abre paginas/restablecer.html. -->
+  <dialog class="forgot-modal" data-forgot-modal aria-labelledby="forgot-title">
+    <button class="forgot-close" type="button" data-forgot-close aria-label="Cerrar">×</button>
+
+    <!-- 1. Pedir el correo -->
+    <form class="auth-form" data-form="forgot-request" novalidate>
+      <span class="forgot-badge" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1"/></g></svg></span>
+      <div class="forgot-head">
+        <h2 id="forgot-title">¿Olvidaste tu clave?</h2>
+        <p>Escribe el correo con el que creaste tu cuenta y te enviaremos un enlace para crear una clave nueva.</p>
+      </div>
+      <label>Correo electrónico<input name="email" type="email" autocomplete="email" required placeholder="nombre@correo.com"></label>
+      <p class="form-error" role="alert" data-error></p>
+      <button class="button button-dark button-wide" type="submit"><span data-label>Enviar enlace</span> <span aria-hidden="true">→</span></button>
+      <button class="forgot-back" type="button" data-forgot-close>Cancelar</button>
+    </form>
+
+    <!-- 2. Enlace enviado -->
+    <div class="forgot-sent" data-forgot-sent hidden>
+      <span class="forgot-badge forgot-badge-ok" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg></span>
+      <div class="forgot-head">
+        <h2>Revisa tu correo</h2>
+        <p>Enviamos un enlace a <strong data-forgot-email></strong>. Ábrelo para crear tu clave nueva. Vence en <span data-forgot-minutes>30</span> minutos.</p>
+        <p class="forgot-tip">¿No lo ves? Revisa la carpeta de spam o promociones.</p>
+      </div>
+      <button class="button button-dark button-wide" type="button" data-forgot-close>Entendido</button>
+      <button class="forgot-back" type="button" data-forgot-retry>Usar otro correo</button>
+    </div>
+  </dialog>
+
+  <!-- ===== PIE DE PÁGINA ===== -->
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <a class="brand brand-footer" href="../index.html"><img src="../assets/img/jeanssync-logo.svg" alt="JeansSync"></a>
+      <p>Jeans para todos los días.<br>Hechos para moverse contigo.</p>
+      <div class="footer-nav"><a href="caballero.html">Caballero</a><a href="dama.html">Dama</a><a href="ninos.html">Niños</a><a href="carrito.html">Carrito</a></div>
+      <div class="footer-contact"><span>HABLEMOS</span><a class="contact-item" href="https://wa.me/573182213870" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp al 318 221 3870"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.21 4.24-9.45 9.46-9.45a9.4 9.4 0 0 1 6.68 2.77 9.39 9.39 0 0 1 2.77 6.69c0 5.21-4.24 9.45-9.46 9.45zm8.05-17.5A11.32 11.32 0 0 0 12.04.66C5.77.66.66 5.77.66 12.04c0 2 .52 3.96 1.52 5.69L.57 23.6l6.03-1.58a11.36 11.36 0 0 0 5.44 1.38h.01c6.27 0 11.38-5.1 11.38-11.37 0-3.04-1.18-5.9-3.34-8.04z"/></svg></span><span class="contact-text">318 221 3870</span></a><a class="contact-item" href="mailto:est_ac_cuvides@fesc.edu.co" aria-label="Enviar correo a est_ac_cuvides@fesc.edu.co"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg></span><span class="contact-text">est_ac_cuvides@fesc.edu.co</span></a><a class="contact-item" href="https://www.google.com/maps/search/?api=1&amp;query=C%C3%BAcuta%2C%20Colombia" target="_blank" rel="noopener" aria-label="Ver Cúcuta, Colombia en el mapa"><span class="contact-badge"><svg class="contact-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span><span class="contact-text">Cúcuta, Colombia</span></a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 JeansSync</span><span>Una tienda de demostración. Pagos simulados.</span></div>
+  </footer>
+</body>
+</html>

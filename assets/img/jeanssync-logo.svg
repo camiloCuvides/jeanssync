@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 150" role="img" aria-labelledby="title">
+  <title id="title">JeansSync</title>
+  <defs>
+    <linearGradient id="denim" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1c4c9a"/>
+      <stop offset="1" stop-color="#102858"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="#12a9e2" stroke-width="3">
+    <path d="M34 113h352"/>
+    <path d="M70 33c-22 0-39 16-39 35v13c0 19 17 35 39 35s39-16 39-35V68c0-19-17-35-39-35Z" fill="url(#denim)" stroke="#122957" stroke-width="4"/>
+    <path d="M70 42c-16 0-29 12-29 27v12c0 15 13 27 29 27s29-12 29-27V69c0-15-13-27-29-27Z" stroke="#43c6f2" stroke-width="5"/>
+    <path d="M70 52c-10 0-19 8-19 18v10c0 10 9 18 19 18s19-8 19-18V70c0-10-9-18-19-18Z" stroke="#43c6f2" stroke-width="4"/>
+    <path d="m107 91 18 2 8-10 10 6 8-12 12 7" stroke-width="5" stroke-linecap="round"/>
+    <path d="M333 40c17 0 29 12 29 28 0 17-13 28-29 28h-11V40h11Z" stroke="#12a9e2" stroke-width="5"/>
+    <path d="M329 48v40m9-40v40m9-31h-23m23 10h-23m23 10h-23" stroke="#12a9e2" stroke-width="2"/>
+  </g>
+  <path d="M128 99h194" stroke="#102858" stroke-width="2"/>
+  <text x="127" y="80" fill="#102858" font-family="Arial,sans-serif" font-size="42" font-weight="800" letter-spacing="-2">Jeans</text>
+  <text x="245" y="80" fill="#08a9e3" font-family="Arial,sans-serif" font-size="42" font-weight="800" letter-spacing="-2">Sync</text>
+  <text x="151" y="112" fill="#102858" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1">MODA · TIENDA EN LÍNEA · TECNOLOGÍA</text>
+</svg>

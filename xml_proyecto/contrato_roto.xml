@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =========================================================
+     productos.xml
+     Respuesta que el SERVIDOR de la tienda en línea JeansSync
+     envía al CLIENTE cuando este solicita el catálogo de jeans.
+     Equivale a lo que hoy entrega api/productos.php en JSON.
+     ========================================================= -->
+
+<!-- Declaración de tipo de documento: las reglas están en productos.dtd -->
+<!DOCTYPE productos SYSTEM "productos.dtd">
+
+<!-- Elemento raíz: el catálogo completo, con la tienda y la fecha -->
+<productos tienda="JeansSync" fecha="2026-11-09">
+
+  <!-- registro de un producto: id único, sección y origen -->
+  <producto id="caballero-01" categoria="caballero" origen="fabrica">
+    <referencia>JS-CAB-001</referencia>
+    <nombre>Ajustado Índigo</nombre>
+    <precio moneda="COP">149900</precio>
+    <stock>42</stock>
+    <descripcion>Un corte limpio y con carácter para todos los días.</descripcion>
+  </producto>
+
+  <producto id="caballero-02" categoria="caballero" origen="fabrica">
+    <referencia>JS-CAB-002</referencia>
+    <nombre>Recto Clásico</nombre>
+    <precio moneda="COP">159900</precio>
+    <stock>8</stock>
+    <descripcion>El corte clásico que nunca pasa de moda.</descripcion>
+  </producto>
+
+  <producto id="dama-01" categoria="dama" origen="fabrica">
+    <referencia>JS-DAM-001</referencia>
+    <nombre>Tiro Alto Aurora</nombre>
+    <precio moneda="COP">139900</precio>
+    <stock>35</stock>
+    <descripcion>Un corte pensado para que te sientas tú, en cualquier plan.</descripcion>
+  </producto>
+
+  <producto id="dama-02" categoria="dama" origen="fabrica">
+    <referencia>JS-DAM-002</referencia>
+    <nombre>Bota Ancha Horizonte</nombre>
+    <precio moneda="COP">149900</precio>
+    <stock>3</stock>
+    <descripcion>Cintura alta y tela suave para llevar a tu ritmo.</descripcion>
+  </producto>
+
+  <producto id="ninos-01" categoria="ninos" origen="fabrica">
+    <referencia>JS-NIN-001</referencia>
+    <nombre>Mini Explorador</nombre>
+    <precio moneda="COP">89900</precio>
+    <stock>27</stock>
+    <descripcion>Cómodo y listo para cada nueva aventura.</descripcion>
+  </producto>
+
+  <producto id="ninos-02" categoria="ninos" origen="fabrica">
+    <referencia>JS-NIN-002</referencia>
+    <nombre>Pequeño Clásico</nombre>
+    <precio moneda="COP">94900</precio>
+    <stock>12</stock>
+    <descripcion>Tela suave para jugar, correr y descubrir.</descripcion>
+  </producto>
+
+  <!-- producto agregado por el administrador: sin descripción (elemento
+       opcional) y con un & en el nombre, escrito como &amp; -->
+  <producto id="caballero-21" categoria="caballero" origen="admin">
+    <referencia>JS-CAB-021</referencia>
+    <nombre>Cargo Bolsillos &amp; Correa</nombre>
+    <precio moneda="COP">189900</precio>
+    <stock>5</stock>
+  </producto>
+
+</productos>
